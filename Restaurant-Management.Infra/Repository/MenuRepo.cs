@@ -1,4 +1,5 @@
-﻿using Restaurant_Management.Core.DTO;
+﻿using Microsoft.AspNetCore.Http;
+using Restaurant_Management.Core.DTO;
 using Restaurant_Management.Core.Models;
 using Restaurant_Management.Core.Repository;
 using System;
@@ -60,6 +61,28 @@ namespace Restaurant_Management.Infra.Repository
         {
             var customer = _dbContext.Customers.FirstOrDefault(x => x.CustomerId == id);
             return customer;
+        }
+        public async Task UpdateMenuAsync(int id, UpdateMenuDTO updateMenuDto)
+        {
+            try
+            {
+                var menu = await _dbContext.Menus.FindAsync(id);
+                if (menu != null)
+                {
+                    menu.Name = updateMenuDto.Name;
+                    menu.Description = updateMenuDto.Description;
+                    menu.Price = updateMenuDto.Price;
+
+                    await _dbContext.SaveChangesAsync();
+                }
+            }catch(Exception ex)
+            {
+                throw;
+            }
+           
+
+            
+            
         }
     }
 }

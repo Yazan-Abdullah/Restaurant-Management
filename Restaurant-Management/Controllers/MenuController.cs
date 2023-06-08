@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant_Management.Core.DTO;
 using Restaurant_Management.Core.Models;
 using Restaurant_Management.Core.Repository;
+using Restaurant_Management.Infra.Repository;
 
 namespace Restaurant_Management.Controllers
 {
@@ -58,6 +59,19 @@ namespace Restaurant_Management.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("/api/menus/{id}")]
+        public async Task<IActionResult> UpdateMenu(int id, UpdateMenuDTO updateMenuDto)
+        {
+            try
+            {
+                await _MenuRepo.UpdateMenuAsync(id, updateMenuDto);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the menu.");
             }
         }
     }
