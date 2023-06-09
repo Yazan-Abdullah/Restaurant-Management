@@ -66,7 +66,7 @@ namespace Restaurant_Management.Controllers
         {
             try
             {
-                var updatedEmployee = await _orderrepo.UpdateEmployeeByIdAsync(id, employeeDto);
+                var updatedEmployee = await _orderrepo.UpdateEmployeeAsync(id, employeeDto);
 
                 if (updatedEmployee == null)
                 {

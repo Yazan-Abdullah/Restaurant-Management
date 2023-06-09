@@ -14,7 +14,7 @@ namespace Restaurant_Management.Core.Repository
         public List<Order> GetOrders();
         public Order GetOrderById(int id);
         Task<Order> CreateOrderAsync(AddOrderDTO orderDto);
-        public Task<Order> UpdateOrderByIdAsync(int id, UpdateOrderDTO orderDto);
+        public Task<Order> UpdateOrderAsync(int id, UpdateOrderDTO orderDto);
         Task DeleteOrderAsync(int id);
         // Table
         public List<Table> GetTables();

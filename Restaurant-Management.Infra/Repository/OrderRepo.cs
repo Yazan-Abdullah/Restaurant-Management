@@ -133,7 +133,7 @@ namespace Restaurant_Management.Infra.Repository
                 throw;
             }
         }
-        public async Task<Order> UpdateOrderByIdAsync(int id, UpdateOrderDTO orderDto)
+        public async Task<Order> UpdateOrderAsync(int id, UpdateOrderDTO orderDto)
         {
             try
             {
@@ -194,13 +194,6 @@ namespace Restaurant_Management.Infra.Repository
             {
                 throw;
             }
-        }
-
-        
-
-        public Task<Employee> UpdateEmployeeAsync(Employee employee, UpdateEmployeeDTO employeeDto)
-        {
-            throw new NotImplementedException();
         }
     }
 }
