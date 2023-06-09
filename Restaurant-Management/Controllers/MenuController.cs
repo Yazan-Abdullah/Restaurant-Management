@@ -61,7 +61,7 @@ namespace Restaurant_Management.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("/api/menus/{id}")]
+        [HttpPut("UpdateMenus/{id}")]
         public async Task<IActionResult> UpdateMenu(int id, UpdateMenuDTO updateMenuDto)
         {
             try

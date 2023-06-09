@@ -14,8 +14,12 @@ namespace Restaurant_Management.Core.Repository
 
         public Menu GetMenuById(int id);
         Task<Menu> CreateMenuAsync(AddMenuDTO menu);
+        Task UpdateMenuAsync(int id, UpdateMenuDTO updateMenuDto);
+        Task DeleteMenuAsync(int id);
         public List<Customer> GetCustomers();
         public Customer GetCustomersById(int id);
-        Task UpdateMenuAsync(int id, UpdateMenuDTO updateMenuDto);
+        Task<Customer> CreateCustomerAsync(AddCustomerDTO customerDto);
+        Task<Customer> UpdateCustomerAsync(int id, UpdateCustomerDTO customerDto);
+        Task<bool> DeleteCustomerAsync(int id);
     }
 }
