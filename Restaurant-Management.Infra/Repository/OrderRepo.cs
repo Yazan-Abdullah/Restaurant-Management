@@ -195,5 +195,66 @@ namespace Restaurant_Management.Infra.Repository
                 throw;
             }
         }
+        public async Task<Table> CreateTableAsync(AddTableDTO tableDto)
+        {
+            try
+            {
+                var table = new Table
+                {
+                    TableNumber = tableDto.TableNumber
+                };
+
+                _dbContext.Tables.Add(table);
+                await _dbContext.SaveChangesAsync();
+
+                return table;
+            }
+            catch (Exception ex)
+            {    
+                throw;
+            }
+        }
+        public async Task<Table> UpdateTableAsync(int id, UpdateTableDTO tableDto)
+        {
+            try
+            {
+                var existingTable = await _dbContext.Tables.FindAsync(id);
+
+                if (existingTable == null)
+                {
+                    return null; 
+                }
+
+                existingTable.TableNumber = tableDto.TableNumber;
+            
+                await _dbContext.SaveChangesAsync();
+
+                return existingTable;
+            }
+            catch (Exception ex)
+            {       
+                throw; 
+            }
+        }
+        public async Task<bool> DeleteTableAsync(int id)
+        {
+            try
+            {
+                var existingTable = await _dbContext.Tables.FindAsync(id);
+
+                if (existingTable == null)
+                {
+                    return false;
+                }
+                _dbContext.Tables.Remove(existingTable);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw; 
+            }
+        }
     }
 }

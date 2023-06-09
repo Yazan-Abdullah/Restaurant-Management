@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Restaurant_Management.Core.DTO
 {
-    public class AddTableDTO
+    public class UpdateTableDTO
     {
         public string TableNumber { get; set; }
     }

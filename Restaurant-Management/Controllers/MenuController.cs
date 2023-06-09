@@ -61,7 +61,8 @@ namespace Restaurant_Management.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("UpdateMenus/{id}")]
+        [HttpPut]
+        [Route("UpdateMenus/{id}")]
         public async Task<IActionResult> UpdateMenu(int id, UpdateMenuDTO updateMenuDto)
         {
             try
@@ -72,6 +73,19 @@ namespace Restaurant_Management.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, "An error occurred while updating the menu.");
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMenu(int id)
+        {
+            try
+            {
+                await _MenuRepo.DeleteMenuAsync(id);
+                return Ok("Menu deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the menu: {ex.Message}");
             }
         }
     }

@@ -19,7 +19,9 @@ namespace Restaurant_Management.Core.Repository
         // Table
         public List<Table> GetTables();
         Task<Table> GetTableByIdAsync(int id);
-
+        Task<Table> CreateTableAsync(AddTableDTO tableDto);
+        Task<Table> UpdateTableAsync(int id, UpdateTableDTO tableDto);
+        Task<bool> DeleteTableAsync(int id);
         // Employee
         public Employee GetEmployeesById(int id);
         public List<Employee> GetEmployees();

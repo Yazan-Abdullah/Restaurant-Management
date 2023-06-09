@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 builder.Services.AddDbContext<RestaurantContext>(cnn => cnn.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<RestaurantContext>();
 builder.Services.AddScoped<IMenuRepo, MenuRepo>();

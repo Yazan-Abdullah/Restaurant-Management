@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Restaurant_Management.Core.DTO;
 using Restaurant_Management.Core.Models;
 using Restaurant_Management.Core.Repository;
 using Restaurant_Management.Infra.Repository;
@@ -26,7 +27,8 @@ namespace Restaurant_Management.Controllers
             List<Table> orders = _orderrepo.GetTables();
             return Ok(orders);
         }
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("GetTableById/{id}")]
         public async Task<IActionResult> GetTableById(int id)
         {
             try
@@ -41,6 +43,59 @@ namespace Restaurant_Management.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, "An error occurred while retrieving the table.");
+            }
+        }
+        [HttpPost]
+        [Route("CreateTable")]
+        public async Task<IActionResult> CreateTable([FromBody] AddTableDTO tableDto)
+        {
+            try
+            {
+                var createdTable = await _orderrepo.CreateTableAsync(tableDto);
+
+                return Ok(createdTable);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while creating the table.");
+            }
+        }
+        [HttpPut]
+        [Route("UpdateTable/{id}")]
+        public async Task<IActionResult> UpdateTable(int id, [FromBody] UpdateTableDTO tableDto)
+        {
+            try
+            {
+                var updatedTable = await _orderrepo.UpdateTableAsync(id, tableDto);
+
+                if (updatedTable == null)
+                {
+                    return NotFound(); 
+                }
+
+                return Ok(updatedTable);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the table.");
+            }
+        }
+        [HttpDelete]
+        [Route("DeleteTable/{id}")]
+        public async Task<IActionResult> DeleteTable(int id)
+        {
+            try
+            {
+                var isDeleted = await _orderrepo.DeleteTableAsync(id);
+                if (!isDeleted)
+                {
+                    return NotFound(); 
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the table.");
             }
         }
     }
