@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Restaurant_Management.Core.DTO;
 using Restaurant_Management.Core.Models;
 using Restaurant_Management.Core.Repository;
 using Restaurant_Management.Infra.Repository;
@@ -44,6 +45,58 @@ namespace Restaurant_Management.Controllers
             {
                 return NotFound();
             }  
+        }
+        [HttpPost]
+        [Route("AddEmployee")]
+        public async Task<IActionResult> CreateEmployee([FromBody] AddEmployeeDTO employeeDto)
+        {
+            try
+            {
+                var createdEmployee = await _orderrepo.CreateEmployeeAsync(employeeDto);
+                return Ok(createdEmployee);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while creating the employee.");
+            }
+        }
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] UpdateEmployeeDTO employeeDto)
+        {
+            try
+            {
+                var updatedEmployee = await _orderrepo.UpdateEmployeeByIdAsync(id, employeeDto);
+
+                if (updatedEmployee == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedEmployee);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the employee.");
+            }
+        }
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            try
+            {
+                var isDeleted = await _orderrepo.DeleteEmployeeByIdAsync(id);
+                if (!isDeleted)
+                {
+                    return NotFound();
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the employee.");
+            }
         }
     }
 }

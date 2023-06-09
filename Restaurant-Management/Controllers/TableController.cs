@@ -26,23 +26,22 @@ namespace Restaurant_Management.Controllers
             List<Table> orders = _orderrepo.GetTables();
             return Ok(orders);
         }
-        [HttpGet]
-        [Route("GettableById/{id}")]
-        public IActionResult GetTableById(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTableById(int id)
         {
             try
             {
-                var table = _orderrepo.GetTablesById(id);
-                if (table != null)
+                var table = await _orderrepo.GetTableByIdAsync(id);
+                if (table == null)
                 {
-                    return Ok(table);
+                    return NotFound();
                 }
-                return NotFound();
+                return Ok(table);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return NotFound();
-            }            
+                return StatusCode(500, "An error occurred while retrieving the table.");
+            }
         }
     }
 }

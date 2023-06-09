@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Restaurant_Management.Core.DTO
 {
-    public class TableDTO
+    public class AddEmployeeDTO
     {
+        public string? Name { get; set; }
 
+        public string? Position { get; set; }
     }
 }

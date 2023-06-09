@@ -9,15 +9,22 @@ using System.Threading.Tasks;
 namespace Restaurant_Management.Core.Repository
 {
     public interface IOrderRepo
-    {
+    { 
+        // Order
         public List<Order> GetOrders();
+        public Order GetOrderById(int id);
         Task<Order> CreateOrderAsync(AddOrderDTO orderDto);
+        public Task<Order> UpdateOrderByIdAsync(int id, UpdateOrderDTO orderDto);
+        Task DeleteOrderAsync(int id);
+        // Table
         public List<Table> GetTables();
-     
+        Task<Table> GetTableByIdAsync(int id);
+
+        // Employee
+        public Employee GetEmployeesById(int id);
         public List<Employee> GetEmployees();
-        public Order GetEmployeesById(int id);
-        public Employee GetTablesById(int id);
-        public Table GetOrdersById(int id);
-       
+        Task<Employee> CreateEmployeeAsync(AddEmployeeDTO employeeDto);
+        public Task<Employee> UpdateEmployeeAsync(int id, UpdateEmployeeDTO employeeDto);
+        Task<bool> DeleteEmployeeByIdAsync(int id);
     }
 }

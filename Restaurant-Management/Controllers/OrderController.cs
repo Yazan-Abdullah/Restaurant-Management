@@ -32,7 +32,7 @@ namespace Restaurant_Management.Controllers
         {
             try
             {
-                var order = _orderrepo.GetOrdersById(id);
+                var order = _orderrepo.GetOrderById(id);
                 if (order != null)
                 {
                     return Ok(order);
@@ -56,6 +56,32 @@ namespace Restaurant_Management.Controllers
             catch (Exception ex)
             {               
                 return Unauthorized(ex);
+            }
+        }
+        [HttpPut("UpdateOrder/{id}")]
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDTO orderDto)
+        {
+            try
+            {
+                await _orderrepo.UpdateOrderAsync(id,orderDto);
+                return Ok("Order Updated Sucessfuly");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the order.");
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            try
+            {
+                await _orderrepo.DeleteOrderAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the order.");
             }
         }
     }

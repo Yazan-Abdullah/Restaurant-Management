@@ -13,13 +13,12 @@ namespace Restaurant_Management.Core.Models
         [Key]
         public int TableId { get; set; }
 
-        [NotMapped]
-        public string TableNumber
+        [Required]
+        public string TableNumber { get; set; }
+
+        public Table()
         {
-            get
-            {
-                return $"{TableId}-{DateTime.Now.ToString("yyyyMMddHHmmss")}";
-            }
+            TableNumber = $"{TableId}_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
         }
     }
 }

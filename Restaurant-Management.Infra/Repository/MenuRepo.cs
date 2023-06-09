@@ -91,17 +91,19 @@ namespace Restaurant_Management.Infra.Repository
         }
 
         //Customer
+        //Get All Customer
         public List<Customer> GetCustomers()
         {
             List<Customer> customers = _dbContext.Customers.ToList();
             return customers;
         }
-       
+        // Get Customers By Id
         public Customer GetCustomersById(int id)
         {
             var customer = _dbContext.Customers.FirstOrDefault(x => x.CustomerId == id);
             return customer;
         }
+        // Add new Customer 
         public async Task<Customer> CreateCustomerAsync(AddCustomerDTO customerDto)
         {
             try
@@ -124,6 +126,7 @@ namespace Restaurant_Management.Infra.Repository
                 throw; 
             }
         }
+        // Update Customer
         public async Task<Customer> UpdateCustomerAsync(int id, UpdateCustomerDTO customerDto)
         {
             try
@@ -147,6 +150,7 @@ namespace Restaurant_Management.Infra.Repository
                 throw;
             }
         }
+        // Delete Customer
         public async Task<bool> DeleteCustomerAsync(int id)
         {
             try
