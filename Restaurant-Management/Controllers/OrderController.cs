@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Restaurant_Management.Core.DTO;
+
 using Restaurant_Management.Core.Models;
 using Restaurant_Management.Core.Repository;
 using Restaurant_Management.Infra.Repository;
+using Serilog;
 
 namespace Restaurant_Management.Controllers
 {
@@ -13,18 +16,27 @@ namespace Restaurant_Management.Controllers
     {
         private readonly IOrderRepo _orderrepo;
         private readonly IConfiguration _configuration;
-        public OrderController(IOrderRepo OrderRepo, IConfiguration configuration)
+        private readonly Helper _helper;
+        private readonly RestaurantContext _DbContext;
+        public OrderController(IOrderRepo OrderRepo, IConfiguration configuration, RestaurantContext DbContext)
         {
             _orderrepo = OrderRepo;
             _configuration = configuration;
+            _helper = new Helper(_DbContext, _configuration);
         }
         [HttpGet]
         [Route("AllOrder")]
-        public IActionResult GetOrder(int pageSize, int pageNumber)
+        public IActionResult GetOrder([FromBody] string token, int pageSize, int pageNumber)
         {
-            List<Order> orders = _orderrepo.GetOrders();
-            int skipAmount = pageSize * pageNumber - (pageSize);
-            return Ok(orders.Skip(skipAmount).Take(pageSize));
+            if (_helper.ValidateJWTtoken(token))
+            {
+                List<Order> orders = _orderrepo.GetOrders();
+                int skipAmount = pageSize * pageNumber - (pageSize);
+                Log.Information("Successfully Get All Order ");
+                return Ok(orders.Skip(skipAmount).Take(pageSize));
+            }
+            Log.Error("Failed Get All Order : Invalid Token");
+            return Unauthorized("Invalid Token");
         }
         [HttpGet]
         [Route("GetOrderById/{id}")]
@@ -46,12 +58,18 @@ namespace Restaurant_Management.Controllers
         }
         [HttpPost]
         [Route("CreateOrder")]
-        public async Task<IActionResult> CreateOrder(AddOrderDTO orderDto)
+        public async Task<IActionResult> CreateOrder(string token, AddOrderDTO orderDto)
         {
             try
             {
-                Order createdOrder = await _orderrepo.CreateOrderAsync(orderDto);
-                return Ok(createdOrder);
+                if (_helper.ValidateJWTtoken(token))
+                {
+                    Order createdOrder = await _orderrepo.CreateOrderAsync(orderDto);
+                    Log.Information("Successfully Create Order");
+                    return Ok(createdOrder);
+                }
+                Log.Error("Failed Create Order : Invalid Token");
+                return Unauthorized("Invalid Token");
             }
             catch (Exception ex)
             {               
@@ -59,12 +77,18 @@ namespace Restaurant_Management.Controllers
             }
         }
         [HttpPut("UpdateOrder/{id}")]
-        public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDTO orderDto)
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDTO orderDto, string token)
         {
             try
             {
-                await _orderrepo.UpdateOrderAsync(id,orderDto);
-                return Ok("Order Updated Sucessfuly");
+                if (_helper.ValidateJWTtoken(token))
+                {
+                    await _orderrepo.UpdateOrderAsync(id, orderDto);
+                    Log.Information("Successfully Update Order ");
+                    return Ok("Order Updated Sucessfuly");
+                }
+                Log.Error("Failed Update Order : Invalid Token");
+                return Unauthorized("Invalid Token");
             }
             catch (Exception ex)
             {
@@ -72,12 +96,18 @@ namespace Restaurant_Management.Controllers
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(int id)
+        public async Task<IActionResult> DeleteOrder([FromBody] string token,int id)
         {
             try
             {
-                await _orderrepo.DeleteOrderAsync(id);
-                return NoContent();
+                if (_helper.ValidateJWTtoken(token))
+                {
+                    await _orderrepo.DeleteOrderAsync(id);
+                    Log.Information(" Order Successfully  Deleted");
+                    return Ok("Order Deleted Sucessfuly");
+                }
+                Log.Error("Failed Delete Order : Invalid Token");
+                return Unauthorized("Invalid Token");
             }
             catch (Exception ex)
             {

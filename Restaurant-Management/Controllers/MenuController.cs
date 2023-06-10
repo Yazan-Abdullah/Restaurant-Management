@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using Restaurant_Management.Core.DTO;
+
 using Restaurant_Management.Core.Models;
 using Restaurant_Management.Core.Repository;
 using Restaurant_Management.Infra.Repository;
+using Serilog;
 
 namespace Restaurant_Management.Controllers
 {
@@ -13,19 +17,28 @@ namespace Restaurant_Management.Controllers
     {
         private readonly IMenuRepo _MenuRepo;
         private readonly IConfiguration _configuration;
-        public MenuController(IMenuRepo menuRepo, IConfiguration configuration)
+        private readonly Helper _helper;
+        private readonly RestaurantContext _DbContext;
+        public MenuController(IMenuRepo menuRepo, IConfiguration configuration, RestaurantContext DbContext)
         {
             _MenuRepo = menuRepo;
             _configuration = configuration;
+            _helper = new Helper(_DbContext,_configuration);
+            _DbContext = DbContext;
         }
         [HttpGet]
         [Route("AllMenu")]
-        public IActionResult GetMenus(int pageSize,int pageNumber)
+        public IActionResult GetMenus( string token ,int pageSize,int pageNumber)
         {
-            List<Menu> menus = _MenuRepo.GetMenus();
-            int skipAmount = pageSize * pageNumber - (pageSize);
-            return Ok(menus.Skip(skipAmount).Take(pageSize));
-            
+            if (_helper.ValidateJWTtoken(token))
+            {
+                List<Menu> menus = _MenuRepo.GetMenus();
+                int skipAmount = pageSize * pageNumber - (pageSize);
+                Log.Information("Successfully Get All Menus ");
+                return Ok(menus.Skip(skipAmount).Take(pageSize));
+            }
+            Log.Error("Failed Get All Menus : Invalid Token");
+            return Unauthorized("Invalid Token");
         }
         [HttpGet]
         [Route("GetMenuById/{id}")]
@@ -49,12 +62,18 @@ namespace Restaurant_Management.Controllers
         }
         [HttpPost]
         [Route("AddMenu")]
-        public async Task<IActionResult> CreateMenu(AddMenuDTO menuDto)
+        public async Task<IActionResult> CreateMenu(string token, AddMenuDTO menuDto)
         {
             try
             {
-                var createdMenu = await _MenuRepo.CreateMenuAsync(menuDto);
-                return Ok("Menu Created Sucessfule");
+                if (_helper.ValidateJWTtoken(token))
+                {
+                    var createdMenu = await _MenuRepo.CreateMenuAsync(menuDto);
+                    Log.Information("Successfully Create Menu ");
+                    return Ok("Menu Created Sucessfule");
+                }
+                Log.Error("Failed Create Menu : Invalid Token");
+                return Unauthorized("Invalid Token");
             }
             catch (Exception ex)
             {
@@ -63,12 +82,18 @@ namespace Restaurant_Management.Controllers
         }
         [HttpPut]
         [Route("UpdateMenus/{id}")]
-        public async Task<IActionResult> UpdateMenu(int id, UpdateMenuDTO updateMenuDto)
+        public async Task<IActionResult> UpdateMenu( string token,int id, UpdateMenuDTO updateMenuDto)
         {
             try
             {
-                await _MenuRepo.UpdateMenuAsync(id, updateMenuDto);
-                return NoContent();
+                if (_helper.ValidateJWTtoken(token))
+                {
+                    await _MenuRepo.UpdateMenuAsync(id, updateMenuDto);
+                    Log.Information("Successfully Updated Menu");
+                    return NoContent();
+                }
+                Log.Error("Failed Update Menu : Invalid Token");
+                return Unauthorized("Invalid Token");
             }
             catch (Exception ex)
             {
@@ -76,12 +101,18 @@ namespace Restaurant_Management.Controllers
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMenu(int id)
+        public async Task<IActionResult> DeleteMenu( string token, int id)
         {
             try
             {
-                await _MenuRepo.DeleteMenuAsync(id);
-                return Ok("Menu deleted successfully.");
+                if (_helper.ValidateJWTtoken(token))
+                {
+                    await _MenuRepo.DeleteMenuAsync(id);
+                    Log.Information("Successfully Delete Menu");
+                    return Ok("Menu deleted successfully.");
+                }
+                Log.Error("Failed Delete Menu : Invalid Token");
+                return Unauthorized("Invalid Token");
             }
             catch (Exception ex)
             {

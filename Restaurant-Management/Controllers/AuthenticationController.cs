@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant_Management.Core.DTO;
-using Restaurant_Management.Core.Helper;
+
 using Restaurant_Management.Core.Models;
 using Restaurant_Management.Core.Repository;
+using Restaurant_Management.Infra.Repository;
 using Serilog;
 using System.Security.Cryptography;
 
@@ -16,12 +17,12 @@ namespace Restaurant_Management.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly RestaurantContext _DbContext;
-        private readonly ApiHelper _helper;
+        private readonly Helper _helper;
         public AuthenticationController(RestaurantContext DbContext, IConfiguration configuration)
         {
             _DbContext = DbContext;
             _configuration = configuration;
-            _helper = new ApiHelper(_DbContext, _configuration);
+            _helper = new Helper(_DbContext, _configuration);
         }
 
         [HttpPost]
