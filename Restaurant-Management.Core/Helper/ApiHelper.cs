@@ -1,4 +1,8 @@
 ﻿using Aspose.Email.Clients;
+using Aspose.Email;
+using System.Net;
+using System.Net.Mail;
+using Aspose.Email.Clients.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Restaurant_Management.Core.DTO;
@@ -8,12 +12,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MailMessage = Aspose.Email.MailMessage;
+using MailAddress = Aspose.Email.MailAddress;
+using SmtpClient = System.Net.Mail.SmtpClient;
+using Aspose.Email.Amp;
+
 
 namespace Restaurant_Management.Core.Helper
 {
@@ -33,10 +41,9 @@ namespace Restaurant_Management.Core.Helper
             constraints = configuration.GetValue<String>("TokenSecrect");
             outlookemail = configuration.GetValue<String>("OutLookEmail");
             outlookpassword = configuration.GetValue<String>("OutLookPassword");
-        }  
+        }
 
-
-        public string GenerateJwtToken(loginResponsDTO loginCredinital, string constraints)
+        public string GenerateJwtToken(loginResponsDTO loginCredinital)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             string jwtToken = constraints;
@@ -46,7 +53,8 @@ namespace Restaurant_Management.Core.Helper
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                         new Claim(ClaimTypes.Email,loginCredinital.Email),
-                        new Claim("CustomerId",loginCredinital.CustomerId.ToString()),                      
+                        new Claim("CustomerId",loginCredinital.CustomerId.ToString()),
+                        new Claim("LoginId",loginCredinital.loginId.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey)
@@ -162,5 +170,45 @@ namespace Restaurant_Management.Core.Helper
             return decrypted;
         }
         #endregion
+        public void SendOTPCode(string Email, int CustomerId)
+        {
+            Random random = new Random();
+            int vcode = random.Next(111111, 999999);
+            verificationCode verificationCode = new verificationCode();
+            verificationCode.ExpireDate = DateTime.UtcNow.AddMinutes(3);
+            verificationCode.Code = vcode.ToString();
+            verificationCode.CustomerId = CustomerId;
+            _DbContext.Add(verificationCode);
+            _DbContext.SaveChanges();
+            // Create a new instance of MailMessage class
+            //MailMessage message = new MailMessage();
+            System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+            // Set subject of the message, body and sender information
+            message.Subject = "Tarzan Restaurant Verficiation Code";
+            message.Body = "Use this Following Code  \n " + vcode + "\nto Confirm Your Opertaion Kindly Remindrer it's valid for 3 minutes since now";
+            //message.From = new MailAddress(outlookemail, "Tarzan Restaurant", false);
+            message.From = new System.Net.Mail.MailAddress(outlookemail);
+
+            // Add To recipients and CC recipients
+            //message.To.Add(new MailAddress(Email, "Recipient 1", false));
+            message.To.Add(new System.Net.Mail.MailAddress(Email));
+
+            //
+            SmtpClient client = new SmtpClient("smtp.office365.com", 587);
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential(outlookemail, outlookpassword);
+            client.EnableSsl = true;
+            try
+            {
+                // Send this email
+                client.Send(message);
+                client.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex.ToString());
+            }
+        }
+
     }
 }

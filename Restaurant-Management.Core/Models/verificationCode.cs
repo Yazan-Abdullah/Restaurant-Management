@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 
 namespace Restaurant_Management.Core.Models
 {
-    public class Login
+    public class verificationCode
     {
         [Key]
-        public int LoginId { get; set; }
-        [Required]
-        public string? Password { get; set; }
-        public bool? IsActive { get; set; }
-        public string? Email { get; set; }
-        public int CustomerId { get; set; }
+        public int VerificationCodesId { get; set; }
+        public string? Code { get; set; }
+        public int? CustomerId { get; set; }
         [ForeignKey("CustomerId")]
-        public Customer? Customer { get; set; }
+        public Customer Customer { get; set; }
+        public DateTime? ExpireDate { get; set; }
+
     }
 }

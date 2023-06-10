@@ -8,12 +8,12 @@ namespace Restaurant_Management.Core.DTO
 {
     public class loginResponsDTO
     {
+        public int loginId { get; set; }
         public int CustomerId { get; set; }
 
-        public string? Name { get; set; }
 
         public string? Email { get; set; }
 
-        public string? Password { get; set; }
+        
     }
 }

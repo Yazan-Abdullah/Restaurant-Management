@@ -12,8 +12,8 @@ using Restaurant_Management.Core.Models;
 namespace Restaurant_Management.Core.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    [Migration("20230608191211_SecondMigration")]
-    partial class SecondMigration
+    [Migration("20230610092509_SocendMigration")]
+    partial class SocendMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,6 +33,12 @@ namespace Restaurant_Management.Core.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"), 1L, 1);
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Iv")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Key")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -66,6 +72,34 @@ namespace Restaurant_Management.Core.Migrations
                     b.HasKey("EmployeeId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Restaurant_Management.Core.Models.Login", b =>
+                {
+                    b.Property<int>("LoginId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoginId"), 1L, 1);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LoginId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Logins");
                 });
 
             modelBuilder.Entity("Restaurant_Management.Core.Models.Menu", b =>
@@ -102,7 +136,7 @@ namespace Restaurant_Management.Core.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TableNumber")
+                    b.Property<int?>("TableId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("TotalPrice")
@@ -150,9 +184,49 @@ namespace Restaurant_Management.Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TableId"), 1L, 1);
 
+                    b.Property<string>("TableNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("TableId");
 
                     b.ToTable("Tables");
+                });
+
+            modelBuilder.Entity("Restaurant_Management.Core.Models.verificationCode", b =>
+                {
+                    b.Property<int>("VerificationCodesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VerificationCodesId"), 1L, 1);
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("VerificationCodesId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("verificationCodes");
+                });
+
+            modelBuilder.Entity("Restaurant_Management.Core.Models.Login", b =>
+                {
+                    b.HasOne("Restaurant_Management.Core.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Restaurant_Management.Core.Models.Order", b =>
@@ -179,6 +253,17 @@ namespace Restaurant_Management.Core.Migrations
                         .HasForeignKey("OrderId");
 
                     b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("Restaurant_Management.Core.Models.verificationCode", b =>
+                {
+                    b.HasOne("Restaurant_Management.Core.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Restaurant_Management.Core.Models.Order", b =>

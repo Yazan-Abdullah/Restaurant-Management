@@ -18,5 +18,7 @@ namespace Restaurant_Management.Core.Models
 
         public string? Password { get; set; }
         public string? Phone { get; set; }
+        public string? Key { get; set; }
+        public string? Iv { get; set; }
     }
 }

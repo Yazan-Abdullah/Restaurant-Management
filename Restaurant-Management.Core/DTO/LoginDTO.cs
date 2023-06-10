@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Restaurant_Management.Core.DTO
 {
-    public class LogenDTO
+    public class LoginDTO
     {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

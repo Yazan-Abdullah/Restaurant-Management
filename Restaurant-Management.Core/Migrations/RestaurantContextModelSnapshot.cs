@@ -33,6 +33,12 @@ namespace Restaurant_Management.Core.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Iv")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -64,6 +70,34 @@ namespace Restaurant_Management.Core.Migrations
                     b.HasKey("EmployeeId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Restaurant_Management.Core.Models.Login", b =>
+                {
+                    b.Property<int>("LoginId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoginId"), 1L, 1);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LoginId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Logins");
                 });
 
             modelBuilder.Entity("Restaurant_Management.Core.Models.Menu", b =>
@@ -157,6 +191,42 @@ namespace Restaurant_Management.Core.Migrations
                     b.ToTable("Tables");
                 });
 
+            modelBuilder.Entity("Restaurant_Management.Core.Models.verificationCode", b =>
+                {
+                    b.Property<int>("VerificationCodesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VerificationCodesId"), 1L, 1);
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("VerificationCodesId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("verificationCodes");
+                });
+
+            modelBuilder.Entity("Restaurant_Management.Core.Models.Login", b =>
+                {
+                    b.HasOne("Restaurant_Management.Core.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("Restaurant_Management.Core.Models.Order", b =>
                 {
                     b.HasOne("Restaurant_Management.Core.Models.Customer", "Customer")
@@ -181,6 +251,17 @@ namespace Restaurant_Management.Core.Migrations
                         .HasForeignKey("OrderId");
 
                     b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("Restaurant_Management.Core.Models.verificationCode", b =>
+                {
+                    b.HasOne("Restaurant_Management.Core.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Restaurant_Management.Core.Models.Order", b =>
