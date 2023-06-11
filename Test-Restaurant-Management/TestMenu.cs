@@ -17,14 +17,14 @@ using Xunit;
 
 namespace Test_Restaurant_Management
 {
-    public class MenuControllerTests
+    public class MenuTests
     {
         private readonly Mock<IMenuRepo> _menuRepoMock;
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly Mock<RestaurantContext> _dbContextMock;
         private readonly MenuController _menuController;
 
-        public MenuControllerTests()
+        public MenuTests()
         {
             _menuRepoMock = new Mock<IMenuRepo>();
             _configurationMock = new Mock<IConfiguration>();
