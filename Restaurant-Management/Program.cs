@@ -6,6 +6,8 @@ using Restaurant_Management.Core.Repository;
 using Restaurant_Management.Infra.Repository;
 using Serilog;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,15 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+// Create an instance of JsonSerializerOptions
+var options = new JsonSerializerOptions
+{
+    ReferenceHandler = ReferenceHandler.Preserve
+};
+
+// Serialize your object using the options
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 Serilog.Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).
                 WriteTo.File("C:\\Users\\Islam\\Desktop\\Looger\\Log.txt", rollingInterval: RollingInterval.Day).
