@@ -32,118 +32,93 @@ namespace Test_Restaurant_Management
         [Fact]
         public void GetOrder_ValidToken_ReturnsOkResult()
         {
-            // Arrange
             string validToken = "valid_token";
             int pageSize = 10;
             int pageNumber = 1;
 
-            // Mock the helper's ValidateJWTtoken method to return true
             SetHelperMock(true);
 
-            // Mock the GetOrders method of IOrderRepo
             List<Order> orders = new List<Order> { new Order(), new Order() };
             _orderRepoMock.Setup(repo => repo.GetOrders()).Returns(orders);
 
-            // Act
             var result = _orderController.GetOrder(validToken, pageSize, pageNumber);
 
-            // Assert
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
         public void GetOrder_InvalidToken_ReturnsUnauthorizedResult()
         {
-            // Arrange
             string invalidToken = "invalid_token";
             int pageSize = 10;
             int pageNumber = 1;
 
-            // Mock the helper's ValidateJWTtoken method to return false
             SetHelperMock(false);
 
-            // Act
             var result = _orderController.GetOrder(invalidToken, pageSize, pageNumber);
 
-            // Assert
             Assert.IsType<UnauthorizedObjectResult>(result);
         }
 
         [Fact]
         public void GetOrderById_ExistingId_ReturnsOkResult()
         {
-            // Arrange
             int existingId = 1;
             var existingOrder = new Order { OrderId = existingId };
 
-            // Mock the GetOrderById method of IOrderRepo
             _orderRepoMock.Setup(repo => repo.GetOrderById(existingId)).Returns(existingOrder);
 
-            // Act
             var result = _orderController.GetOrderById(existingId);
 
-            // Assert
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
         public void GetOrderById_NonExistingId_ReturnsNotFoundResult()
         {
-            // Arrange
             int nonExistingId = 999;
 
             // Mock the GetOrderById method of IOrderRepo to return null
             _orderRepoMock.Setup(repo => repo.GetOrderById(nonExistingId)).Returns((Order)null);
 
-            // Act
+
             var result = _orderController.GetOrderById(nonExistingId);
 
-            // Assert
             Assert.IsType<NotFoundResult>(result);
         }
 
         [Fact]
         public async Task CreateOrder_ValidToken_ReturnsOkResult()
         {
-            // Arrange
             string validToken = "valid_token";
             var orderDto = new AddOrderDTO();
 
-            // Mock the helper's ValidateJWTtoken method to return true
             SetHelperMock(true);
 
-            // Mock the CreateOrderAsync method of IOrderRepo
             var createdOrder = new Order();
             _orderRepoMock.Setup(repo => repo.CreateOrderAsync(orderDto)).ReturnsAsync(createdOrder);
 
-            // Act
             var result = await _orderController.CreateOrder(validToken, orderDto);
 
-            // Assert
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
         public async Task CreateOrder_InvalidToken_ReturnsUnauthorizedResult()
         {
-            // Arrange
             string invalidToken = "invalid_token";
             var orderDto = new AddOrderDTO();
 
-            // Mock the helper's ValidateJWTtoken method to return false
             SetHelperMock(false);
 
-            // Act
             var result = await _orderController.CreateOrder(invalidToken, orderDto);
 
-            // Assert
             Assert.IsType<UnauthorizedObjectResult>(result);
         }
 
         [Fact]
         public async Task UpdateOrder_ValidToken_ReturnsOkResult()
         {
-            // Arrange
             int orderId = 1;
             var orderDto = new UpdateOrderDTO();
             string validToken = "valid_token";
@@ -151,62 +126,47 @@ namespace Test_Restaurant_Management
             // Mock the helper's ValidateJWTtoken method to return true
             SetHelperMock(true);
 
-            // Act
             var result = await _orderController.UpdateOrder(orderId, orderDto, validToken);
-
-            // Assert
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
         public async Task UpdateOrder_InvalidToken_ReturnsUnauthorizedResult()
         {
-            // Arrange
             int orderId = 1;
             var orderDto = new UpdateOrderDTO();
             string invalidToken = "invalid_token";
 
-            // Mock the helper's ValidateJWTtoken method to return false
             SetHelperMock(false);
 
-            // Act
             var result = await _orderController.UpdateOrder(orderId, orderDto, invalidToken);
 
-            // Assert
             Assert.IsType<UnauthorizedObjectResult>(result);
         }
 
         [Fact]
         public async Task DeleteOrder_ValidToken_ReturnsOkResult()
         {
-            // Arrange
             int orderId = 1;
             string validToken = "valid_token";
 
-            // Mock the helper's ValidateJWTtoken method to return true
             SetHelperMock(true);
 
-            // Act
             var result = await _orderController.DeleteOrder(validToken, orderId);
 
-            // Assert
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
         public async Task DeleteOrder_InvalidToken_ReturnsUnauthorizedResult()
         {
-            // Arrange
             int orderId = 1;
             string invalidToken = "invalid_token";
 
-            // Mock the helper's ValidateJWTtoken method to return false
             SetHelperMock(false);
 
-            // Act
             var result = await _orderController.DeleteOrder(invalidToken, orderId);
 
-            // Assert
             Assert.IsType<UnauthorizedObjectResult>(result);
         }
 
