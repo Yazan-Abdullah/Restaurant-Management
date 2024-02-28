@@ -28,7 +28,7 @@ var options = new JsonSerializerOptions
 // Serialize your object using the options
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 Serilog.Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).
-                WriteTo.File("C:\\Users\\Islam\\Desktop\\Looger\\Log.txt", rollingInterval: RollingInterval.Day).
+                WriteTo.File("C:\\Users\\Yazan\\Desktop\\Looger\\log.txt", rollingInterval: RollingInterval.Day).
                 CreateLogger();
 builder.Services.AddDbContext<RestaurantContext>(cnn => cnn.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<RestaurantContext>();
